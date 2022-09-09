@@ -19,7 +19,7 @@ public class ElevatorPrinter {
     }
 
     public void print(int cycle, int currentFloor, boolean upDirection) {
-        System.out.printf("********* cycle %d *********%s", cycle, System.lineSeparator());
+        System.out.printf("******** cycle %d ********%s", cycle, System.lineSeparator());
         for (int i = floors.size() - 1; i >= 0; i--) {
             StringBuilder builder = new StringBuilder();
             builder.append(String.format("%2d | ", i));
