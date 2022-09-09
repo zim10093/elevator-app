@@ -21,12 +21,16 @@ public class ElevatorPrinter {
     public void print(int cycle, int currentFloor, boolean upDirection) {
         System.out.printf("********* cycle %d *********%s", cycle, System.lineSeparator());
         for (int i = floors.size() - 1; i >= 0; i--) {
+            StringBuilder builder = new StringBuilder();
+            builder.append(String.format("%2d | ", i));
             if (i == currentFloor) {
-                System.out.printf("%2d | %s %15s | %s\n", i,
-                        (upDirection ? UP_ARROW : DOWN_ARROW),
-                        getHumansInElevator(), getHumansOnFloor(i));
+                builder.append(String.format("%s %15s ", (upDirection ? UP_ARROW : DOWN_ARROW),
+                        getHumansInElevator()));
             } else {
-                System.out.printf("%2d | %18s| %s\n", i, "", getHumansOnFloor(i));}
+                builder.append(String.format("%18s", ""));
+            }
+            builder.append("| ").append(getHumansOnFloor(i));
+            System.out.println(builder);
         }
     }
 
