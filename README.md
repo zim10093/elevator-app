@@ -9,7 +9,7 @@ Human`s destination floor generate randomly too when people appeared on the floo
  - Number of people on the floor
  - Numbers of cycles
 
-#### Haw to start
+#### How to start
 Run from Main class
 #### Example of visualisation
 ```
