@@ -1,5 +1,6 @@
 package core.model;
 
+import core.services.ElevatorPrinter;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -8,13 +9,17 @@ import java.util.stream.Collectors;
 public class Elevator extends AbstractHumanContainer implements Workable {
     private final int maxPayload;
     private final List<AbstractHumanContainer> floors;
+    private final ElevatorPrinter printer;
     private int destinationFloor;
     private boolean upDirection;
 
-    public Elevator(int maxPayload, List<AbstractHumanContainer> floors, int floor) {
+    public Elevator(int maxPayload, List<AbstractHumanContainer> floors,
+                    int floor, ElevatorPrinter printer) {
         super(floor);
         this.maxPayload = maxPayload;
         this.floors = floors;
+        this.printer = printer;
+        init();
     }
 
     @Override
@@ -22,25 +27,16 @@ public class Elevator extends AbstractHumanContainer implements Workable {
         destinationFloor = -1;
         for (int i = 0; i < cycles; i++) {
             exchangeHumans();
+            checkDirection();
             calculateDestinationFloor();
-            print(i);
+            printer.print(i, currentFloor, upDirection);
             move();
         }
     }
 
-    private void print(int cycle){
-        System.out.println("********* cycle "  + cycle + " *********");
-        for (int i = floors.size() - 1; i >= 0; i--) {
-            String humansInElevator = getHumans().stream().map(h -> String.valueOf(h.getDestinationFloor()))
-                    .collect(Collectors.joining(" "));
-            String humansOnFloor = floors.get(i).getHumans().stream().map(h -> String.valueOf(h.getDestinationFloor()))
-                    .collect(Collectors.joining(" "));
-            if (i == currentFloor) {
-                System.out.printf("%2d | %s %15s | %s\n", i,
-                        (upDirection ? (char) 8593 : (char) 8595), humansInElevator, humansOnFloor);
-            } else {
-            System.out.printf("%2d | %18s| %s\n", i, "", humansOnFloor);}
-        }
+    private void init() {
+        printer.setElevator(this);
+        printer.setFloors(floors);
     }
 
     private void move() {
@@ -78,7 +74,7 @@ public class Elevator extends AbstractHumanContainer implements Workable {
     }
 
     private Set<Human> getPreparedToOutHumans() {
-        Collection<Human> humans = null;
+        Collection<Human> humans;
 
         if (destinationFloor == -1 ) {
             humans = currentFloor == 0 ? downHumans : upHumans;
@@ -115,19 +111,13 @@ public class Elevator extends AbstractHumanContainer implements Workable {
         }
     }
 
-//    private void checkDirection() {
-//        if (currentFloor == 0) {
-//            upDirection = true;
-//        } else if (currentFloor == floors.size() - 1) {
-//            upDirection = false;
-//        }
-//    }
-//
-//    private void checkDestination() {
-//        if (currentFloor == destinationFloor) {
-//            destinationFloor = -1;
-//        }
-//    }
+        private void checkDirection() {
+        if (currentFloor == 0) {
+            upDirection = true;
+        } else if (currentFloor == floors.size() - 1) {
+            upDirection = false;
+        }
+    }
 
     private int numbersOfPassengers() {
         return upHumans.size() + downHumans.size();
